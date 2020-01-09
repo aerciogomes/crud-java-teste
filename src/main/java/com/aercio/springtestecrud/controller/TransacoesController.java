@@ -25,7 +25,7 @@ public class TransacoesController {
 
     
     @GetMapping(path = {"/{id}"})
-    public ResponseEntity findByIdTransacao(@PathVariable long id){
+    public ResponseEntity findByIdTransacao(@PathVariable Long id){
         return repository.findById(id)
                 .map(record -> ResponseEntity.ok().body(record))
                 .orElse(ResponseEntity.notFound().build());
@@ -37,7 +37,7 @@ public class TransacoesController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity updateTransacao(@PathVariable("id") long id, @RequestBody Transacoes transacao){
+    public ResponseEntity updateTransacao(@PathVariable("id") Long id, @RequestBody Transacoes transacao){
         return repository.findById(id)
                 .map(record -> {
                     record.setIdConta(transacao.getIdConta());

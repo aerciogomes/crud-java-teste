@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @AllArgsConstructor
@@ -15,11 +16,14 @@ public class Contas {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idConta;
+    private long idConta;
 
-    @ManyToOne
-    @JoinColumn(name = "idPessoa")
-    private Pessoas idPessoa;
+//    @ManyToOne
+//    @JoinColumn(name = "idPessoa", referencedColumnName = "idPessoa")
+//    @NotFound(action = NotFoundAction.IGNORE)
+//    private Pessoas idPessoa;
+
+    private Long idPessoa;
 
     private Double limiteSaqueDiario;
     private Double saldo;

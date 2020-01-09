@@ -4,10 +4,14 @@ import com.aercio.springtestecrud.model.Contas;
 import com.aercio.springtestecrud.model.Pessoas;
 import com.aercio.springtestecrud.repository.ContasRepository;
 import com.aercio.springtestecrud.repository.PessoasRepository;
+import com.aercio.springtestecrud.service.ServicoValidacao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,7 +26,7 @@ public class ContasController {
     private PessoasRepository pessoaRepository;
 
     @GetMapping
-    public List<Contas> findAll(){
+    public List findAll(){
         return repository.findAll();
     }
 
@@ -33,7 +37,7 @@ public class ContasController {
         TODO: findByIdConta ou findById????
      */
     @GetMapping(path = {"/{id}"})
-    public ResponseEntity findByIdConta(@PathVariable long id){
+    public ResponseEntity findByIdConta(@PathVariable Long id){
 
         return repository.findById(id)
                 .map(record -> ResponseEntity.ok().body(record))
@@ -41,25 +45,28 @@ public class ContasController {
     }
 
     @PostMapping
-    public Contas createConta(@RequestBody Contas contas){
-//        List a = pessoaRepository.findByIdPessoa(contas.getIdPessoa());
-//        if(a.isEmpty()){
-//            return "Não Encontrado";
-//        }
-
-        return repository.save(contas);
+    public ResponseEntity createConta(@RequestBody Contas contas){
+        if(!ServicoValidacao.validaConta(contas)){
+            return ResponseEntity.badRequest().build();
+        }
+        List a = pessoaRepository.findByIdPessoa(contas.getIdPessoa());
+        if(a.isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+        contas.setDataCriacao(new Date(new java.util.Date().getTime()));
+        return ResponseEntity.ok().body(repository.save(contas));
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity updateConta(@PathVariable("id") long id, @RequestBody Contas contas){
+    public ResponseEntity updateConta(@PathVariable("id") Long id, @RequestBody Contas contas){
         return repository.findById(id)
                 .map(record -> {
-                    record.setLimiteSaqueDiario(contas.getLimiteSaqueDiario());
-                    record.setSaldo(contas.getSaldo());
-                    record.setFlagAtivo(contas.getFlagAtivo());
-                    record.setTipoConta(contas.getTipoConta());
-                    record.setDataCriacao(contas.getDataCriacao());
-                    record.setIdPessoa(contas.getIdPessoa());
+                    if(contas.getLimiteSaqueDiario() != null) record.setLimiteSaqueDiario(contas.getLimiteSaqueDiario());
+                    if(contas.getSaldo() != null){record.setSaldo(contas.getSaldo());}
+                    if(contas.getFlagAtivo() != null) {record.setFlagAtivo(contas.getFlagAtivo());}
+                    if(contas.getTipoConta() != null) {record.setTipoConta(contas.getTipoConta());}
+                    //if(contas.getDataCriacao() != null) {record.setDataCriacao(contas.getDataCriacao());}
+                    if(contas.getIdPessoa() != null) {record.setIdPessoa(contas.getIdPessoa());}
                     Contas updated = repository.save(record);
                     return ResponseEntity.ok().body(updated);
                 }).orElse(ResponseEntity.notFound().build());
@@ -72,6 +79,26 @@ public class ContasController {
                     repository.deleteById(id);
                     return ResponseEntity.ok().build();
                 }).orElse(ResponseEntity.notFound().build());
+    }
+
+    @PutMapping(path = {"/deposito/{id}/valor/{deposito}"})
+    public ResponseEntity depositaConta(@PathVariable("id") Long id,@PathVariable Double deposito){
+        Contas conta = repository.findByIdConta(id);
+        Double Valor = conta.getSaldo() + deposito;
+        conta.setSaldo(Valor);
+        return updateConta(id,conta);
+    }
+
+    @PutMapping(path = {"/saque/{id}/{valor}"})
+    public ResponseEntity saqueConta(@PathVariable("id") Long id, @PathVariable("valor") Double valor){
+        Contas conta = repository.findByIdConta(id);
+        if(ServicoValidacao.validaSaqueConta(conta,valor)){
+            Double Valor = conta.getSaldo() - valor;
+            conta.setSaldo(Valor);
+            return updateConta(id,conta);
+        }else{
+            return ResponseEntity.noContent().build();
+        }
     }
 
 }

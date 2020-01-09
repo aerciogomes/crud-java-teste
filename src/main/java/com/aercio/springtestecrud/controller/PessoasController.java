@@ -2,7 +2,7 @@ package com.aercio.springtestecrud.controller;
 
 import com.aercio.springtestecrud.model.Pessoas;
 import com.aercio.springtestecrud.repository.PessoasRepository;
-import com.aercio.springtestecrud.service.ServicoPessoas;
+import com.aercio.springtestecrud.service.ServicoValidacao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +26,7 @@ public class PessoasController {
     }
 
     @GetMapping(path = {"/{id}"})
-    public ResponseEntity findById(@PathVariable long id){
+    public ResponseEntity findById(@PathVariable Long id){
         return repository.findById(id)
                 .map(record -> ResponseEntity.ok().body(record))
                 .orElse(ResponseEntity.notFound().build());
@@ -34,7 +34,7 @@ public class PessoasController {
 
     @PostMapping
     public ResponseEntity createPessoa(@RequestBody Pessoas pessoa){
-        if(ServicoPessoas.validaPessoa(pessoa)) {
+        if(ServicoValidacao.validaPessoa(pessoa)) {
             return ResponseEntity.ok().body(repository.save(pessoa));
         }else{
             return ResponseEntity.badRequest().build();
@@ -42,7 +42,7 @@ public class PessoasController {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity updatePessoa(@PathVariable("id") long id, @RequestBody Pessoas pessoa){
+    public ResponseEntity updatePessoa(@PathVariable("id") Long id, @RequestBody Pessoas pessoa){
         return repository.findById(id)
                 .map(record -> {
                     if(pessoa.getNome() != null && !pessoa.getNome().isEmpty()) {record.setNome(pessoa.getNome());}

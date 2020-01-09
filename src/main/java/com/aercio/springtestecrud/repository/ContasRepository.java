@@ -9,5 +9,6 @@ import java.util.List;
 @Repository
 public interface ContasRepository extends JpaRepository<Contas,Long> {
 
-    //List findByCpf(String cpf);
+    Contas findByIdConta(Long id);
+
 }

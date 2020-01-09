@@ -11,5 +11,5 @@ public interface PessoasRepository extends JpaRepository<Pessoas, Long> {
 
     List findByCpf(String cpf);
 
-    List findByIdPessoa(Pessoas idPessoa);
+    List findByIdPessoa(Long idPessoa);
 }

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -20,6 +21,8 @@ public class Pessoas {
     private String nome;
     private String cpf;
     private Date dataNascimento;
+
+
 
 //    public boolean validaPessoa(Pessoas pessoa){
 //        if(pessoa.getNome() == null || pessoa.getNome().isEmpty()){return false;}
