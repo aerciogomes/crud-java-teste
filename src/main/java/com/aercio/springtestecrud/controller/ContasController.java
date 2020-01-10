@@ -30,12 +30,6 @@ public class ContasController {
         return repository.findAll();
     }
 
-
-    /*
-        HTTP 200 (ResponseEntity.ok())
-        HTTP 404 - Não Encontrado (ResponseEntity.notFound())
-        TODO: findByIdConta ou findById????
-     */
     @GetMapping(path = {"/{id}"})
     public ResponseEntity findByIdConta(@PathVariable Long id){
 
@@ -81,24 +75,24 @@ public class ContasController {
                 }).orElse(ResponseEntity.notFound().build());
     }
 
-    @PutMapping(path = {"/deposito/{id}/valor/{deposito}"})
-    public ResponseEntity depositaConta(@PathVariable("id") Long id,@PathVariable Double deposito){
-        Contas conta = repository.findByIdConta(id);
-        Double Valor = conta.getSaldo() + deposito;
-        conta.setSaldo(Valor);
-        return updateConta(id,conta);
-    }
-
-    @PutMapping(path = {"/saque/{id}/{valor}"})
-    public ResponseEntity saqueConta(@PathVariable("id") Long id, @PathVariable("valor") Double valor){
-        Contas conta = repository.findByIdConta(id);
-        if(ServicoValidacao.validaSaqueConta(conta,valor)){
-            Double Valor = conta.getSaldo() - valor;
-            conta.setSaldo(Valor);
-            return updateConta(id,conta);
-        }else{
-            return ResponseEntity.noContent().build();
-        }
-    }
+//    @PutMapping(path = {"/deposito/{id}/valor/{deposito}"})
+//    public ResponseEntity depositaConta(@PathVariable("id") Long id,@PathVariable Double deposito){
+//        Contas conta = repository.findByIdConta(id);
+//        Double Valor = conta.getSaldo() + deposito;
+//        conta.setSaldo(Valor);
+//        return updateConta(id,conta);
+//    }
+//
+//    @PutMapping(path = {"/saque/{id}/{valor}"})
+//    public ResponseEntity saqueConta(@PathVariable("id") Long id, @PathVariable("valor") Double valor){
+//        Contas conta = repository.findByIdConta(id);
+//        if(ServicoValidacao.validaSaqueConta(conta,valor)){
+//            Double Valor = conta.getSaldo() - valor;
+//            conta.setSaldo(Valor);
+//            return updateConta(id,conta);
+//        }else{
+//            return ResponseEntity.noContent().build();
+//        }
+//    }
 
 }

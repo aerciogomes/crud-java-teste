@@ -3,6 +3,7 @@ package com.aercio.springtestecrud.service;
 
 import com.aercio.springtestecrud.model.Contas;
 import com.aercio.springtestecrud.model.Pessoas;
+import com.aercio.springtestecrud.model.Transacoes;
 import com.sun.org.apache.bcel.internal.generic.RETURN;
 import lombok.NoArgsConstructor;
 
@@ -34,6 +35,13 @@ public class ServicoValidacao {
         if(conta.getLimiteSaqueDiario() < valorSaque){return false;}
         if(conta.getSaldo() < valorSaque){return false;}
         if(conta.getFlagAtivo() == 0) {return false;}
+
+        return true;
+    }
+
+    public static boolean validaTransacao(Transacoes transacao){
+        if(transacao.getIdConta() == null){return false;}
+        if(transacao.getValor() == null || transacao.getValor() <= 0){return false;}
 
         return true;
     }

@@ -16,12 +16,11 @@ public class Pessoas {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idPessoa;
+    private long idPessoa;
 
     private String nome;
     private String cpf;
     private Date dataNascimento;
-
 
 
 //    public boolean validaPessoa(Pessoas pessoa){
